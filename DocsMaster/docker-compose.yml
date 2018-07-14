@@ -1,0 +1,7 @@
+version: '3.6'
+services:
+  docs-master:
+    image: docs-master-vm
+    build: .
+    ports:
+      - 8080:8080

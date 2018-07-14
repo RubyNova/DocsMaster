@@ -2,44 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DocsMaster.Models;
+using DocsMaster.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocsMaster.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ManualEntryController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] {"value1", "value2"};
-        }
+        private readonly IManualEntryRetriverService _docsDb;
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public ManualEntryController(IManualEntryRetriverService docsDb)
         {
-            return "value";
+            _docsDb = docsDb;
         }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        
+        [HttpGet("{manualName}/{entryName}")]
+        public ActionResult<ManualEntryModel> GetEntryForLatestVersion(string manualName, string entryName)
         {
+            var result = _docsDb.GetManualEntryForLatestVersion(manualName, entryName);
+            return new ManualEntryModel
+            {
+                Description = result.Description,
+                EntryName = result.EntryName,
+                FullReferenceLink = result.FullReferenceLink,
+                ManualVersion = _docsDb.GetLatestVersionForManual(manualName)
+            };
         }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        
+        [HttpGet("{manualName}/{entryName}/{version}")]
+        public ActionResult<ManualEntryModel> GetEntry(string manualName, string entryName, string version)
         {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var result = _docsDb.GetManualEntry(manualName, entryName, version);
+            return new ManualEntryModel
+            {
+                Description = result.Description,
+                EntryName = result.EntryName,
+                FullReferenceLink = result.FullReferenceLink,
+                ManualVersion = version
+            };
         }
     }
 }
