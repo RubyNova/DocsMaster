@@ -19,7 +19,7 @@ namespace DocsMaster.Services
         public DocsManualEntry GetManualEntryForLatestVersion(string manualName, string entryName)
         {
             //var filter = Builders<DocsManual>.Filter.Eq(x => x.ManualName, manualName);
-            var manual = _context.Docs.AsQueryable().FirstOrDefault(x => x.ManualName.ToLower() == manualName.ToLower());
+            var manual = _context.Docs.AsQueryable().Where(x => x.ManualName.ToLower() == manualName.ToLower()).OrderByDescending(x => x.ManualVersion).FirstOrDefault();
 
             return manual?.Entries.FirstOrDefault(x =>
                 string.Equals(entryName, x.EntryName, StringComparison.OrdinalIgnoreCase));
@@ -27,7 +27,8 @@ namespace DocsMaster.Services
 
         public DocsManualEntry GetManualEntry(string manualName, string entryName, string manualVersion)
         {
-            var manual = _context.Docs.AsQueryable().FirstOrDefault(x => x.ManualName.ToLower() == manualName.ToLower() && x.ManualVersion.ToLower() == manualVersion.ToLower());
+            var manual = _context.Docs.AsQueryable().FirstOrDefault(x =>
+                x.ManualName.ToLower() == manualName.ToLower() && x.ManualVersion.ToLower() == manualVersion.ToLower());
 
             return manual?.Entries.FirstOrDefault(x =>
                 string.Equals(entryName, x.EntryName, StringComparison.OrdinalIgnoreCase));
