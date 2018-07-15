@@ -1,7 +1,17 @@
-version: '3.6'
+# WARNING
+# Docker compose does not seem to work with these environment variables. I assume the yaml parser trips up when parsing the *
+# It does work, however, if you pass all the variables here with -e 'var'
+# eg. docker run -p 8080:8080 -e 'Logging__LogLevel__Default=Warning' -e 'AllowedHosts=*' -e 'DbConnectionString=mongodb://user:uri:port/db' -e 'Database=db' -e 'DocsCollection=collection' docsmaster:latest
+
+version: '3.4'
 services:
   docs-master:
-    image: docs-master-vm
-    build: .
+    image: docsmaster:latest
+    environment:
+      - 'Logging__LogLevel__Default=Warning'
+      - 'AllowedHosts=*'
+      - 'DbConnectionString=mongodb://user:uri:port/db'
+      - 'Database=docs_master_db'
+      - 'DocsCollection=ManualEntries'
     ports:
       - 8080:8080

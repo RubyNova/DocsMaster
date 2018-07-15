@@ -34,10 +34,12 @@ namespace DocsMaster
             }
             else
             {
-                app.UseHsts();
+                //TODO: re-enable HTTPS for release as soon as possible
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //TODO: re-enable HTTPS for release as soon as possible
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
