@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DocsMaster.DataAccess;
 using Microsoft.Extensions.Options;
@@ -38,6 +39,12 @@ namespace DocsMaster.Services
         {
             var manual = _context.Docs.Find(_ => true).SortByDescending(x => x.ManualVersion).First();
             return manual.ManualVersion;
+        }
+
+        public List<string> GetAllManualVersions(string manualName)
+        {
+            var filter = Builders<DocsManual>.Filter.Eq(x => x.ManualName, manualName);
+            return _context.Docs.Find(filter).ToEnumerable().Select(x => x.ManualVersion).Distinct().ToList();
         }
     }
 }

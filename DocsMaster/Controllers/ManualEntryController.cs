@@ -18,7 +18,13 @@ namespace DocsMaster.Controllers
         {
             _docsDb = docsDb;
         }
-        
+
+        [HttpGet("{manualName}")]
+        public ActionResult<List<string>> GetAllManualVersions(string manualName)
+        {
+            return _docsDb.GetAllManualVersions(manualName);
+        }
+
         [HttpGet("{manualName}/{entryName}")]
         public ActionResult<ManualEntryModel> GetEntryForLatestVersion(string manualName, string entryName)
         {
@@ -44,5 +50,7 @@ namespace DocsMaster.Controllers
                 ManualVersion = version
             };
         }
+        
+
     }
 }
