@@ -18,20 +18,18 @@ namespace DocsMaster.Services
         
         public DocsManualEntry GetManualEntryForLatestVersion(string manualName, string entryName)
         {
-            var filter = Builders<DocsManual>.Filter.Eq(x => x.ManualName, manualName);
-            var manual = _context.Docs.Find(filter).SortByDescending(x => x.ManualVersion).First();
+            //var filter = Builders<DocsManual>.Filter.Eq(x => x.ManualName, manualName);
+            var manual = _context.Docs.AsQueryable().FirstOrDefault(x => x.ManualName.ToLower() == manualName.ToLower());
 
-            return manual.Entries.FirstOrDefault(x =>
+            return manual?.Entries.FirstOrDefault(x =>
                 string.Equals(entryName, x.EntryName, StringComparison.OrdinalIgnoreCase));
         }
 
         public DocsManualEntry GetManualEntry(string manualName, string entryName, string manualVersion)
         {
-            var filter = Builders<DocsManual>.Filter;
-            var versionFilter = filter.Eq(x => x.ManualName, manualName) & filter.Eq(x => x.ManualVersion, manualVersion);
-            var manual = _context.Docs.Find(versionFilter).SortByDescending(x => x.ManualVersion).First();
-            
-            return manual.Entries.FirstOrDefault(x =>
+            var manual = _context.Docs.AsQueryable().FirstOrDefault(x => x.ManualName.ToLower() == manualName.ToLower() && x.ManualVersion.ToLower() == manualVersion.ToLower());
+
+            return manual?.Entries.FirstOrDefault(x =>
                 string.Equals(entryName, x.EntryName, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -43,8 +41,8 @@ namespace DocsMaster.Services
 
         public List<string> GetAllManualVersions(string manualName)
         {
-            var filter = Builders<DocsManual>.Filter.Eq(x => x.ManualName, manualName);
-            return _context.Docs.Find(filter).ToEnumerable().Select(x => x.ManualVersion).Distinct().ToList();
+            return _context.Docs.AsQueryable().Where(x => x.ManualName.ToLower() == manualName.ToLower())
+                .Select(x => x.ManualVersion).OrderBy(x => x).ToList();
         }
     }
 }
